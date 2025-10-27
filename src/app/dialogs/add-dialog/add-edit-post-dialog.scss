@@ -1,0 +1,53 @@
+.dialog-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 320px;
+}
+
+.header .mode {
+  font-weight: 600;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.75rem;
+}
+
+.category {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  grid-column: span 6;
+}
+
+.error {
+  color: #ef4444; // rose/red-ish
+  font-size: 0.75rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+/* ancho completo para el select */
+:host ::ng-deep .p-select {
+  width: 100%;
+}

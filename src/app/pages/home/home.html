@@ -1,0 +1,84 @@
+<div class="flex flex-col gap-6">
+    <div class="card">
+        <div class="font-semibold text-xl mb-4">Posts</div>
+        <p-toolbar>
+            <ng-template #start>
+                <p-button icon="pi pi-plus" (click)="openCreate()" class="mr-2" severity="secondary" text />
+                <p-button icon="pi pi-filter" class="mr-2" severity="secondary" text />
+            </ng-template>
+
+            <ng-template #end>
+                <p-iconfield>
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input pInputText placeholder="Search" />
+                </p-iconfield>
+            </ng-template>
+        </p-toolbar>
+    </div>
+
+    <div class="flex flex-col gap-6">
+        <div class="card post-card" *ngFor="let post of posts">
+            <p-panel [toggleable]="false" styleClass="post-panel">
+                <ng-template pTemplate="header">
+                    <div class="post-header">
+                        <div class="post-header-left">
+                            <p-avatar class="post-avatar"
+                                [label]="(post?.CreatedBy?.userName || 'U') | slice:0:1 | uppercase" size="large"
+                                shape="circle">
+                            </p-avatar>
+
+                            <div class="post-meta">
+                                <div class="post-meta-top">
+                                    <span class="post-author">{{ post?.CreatedBy?.userName }}</span>
+                                    <span class="post-dot">•</span>
+                                    <span class="post-badge">{{ post?.category }}</span>
+                                </div>
+                                <span class="post-submeta">publicó un post</span>
+                            </div>
+                        </div>
+
+                        <div class="post-header-actions">
+                            <p-button icon="pi pi-ellipsis-h" text rounded severity="secondary"></p-button>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <div class="post-content">
+                    <h3 class="post-title">{{ post?.title }}</h3>
+                    <p class="post-desc">{{ post?.description }}</p>
+                </div>
+
+                <div class="post-comments">
+                    <ng-container *ngIf="post.comments.length && post && post.comments; else noComments">
+                        <div class="comment-row">
+                            <p-avatar class="comment-avatar"
+                                [label]="(post?.comments?.[0]?.createdBy?.userName || 'U') | slice:0:1 | uppercase"
+                                size="normal" shape="circle">
+                            </p-avatar>
+
+                            <div class="comment-body">
+                                <div class="comment-author">
+                                    {{ post?.comments?.[0]?.createdBy?.userName }}
+                                </div>
+                                <div class="comment-text">
+                                    {{ post?.comments?.[0]?.content }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <p-button icon="pi pi-comments" label="Ver más comentarios" text size="small"
+                            class="see-more-btn">
+                        </p-button>
+                    </ng-container>
+
+                    <ng-template #noComments>
+                        <p class="no-comments">Sin comentarios aún.</p>
+                    </ng-template>
+                </div>
+            </p-panel>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,48 @@
+<div class="dialog-wrapper">
+  <div class="header">
+    <span class="mode">
+      {{ mode() === 'create' ? 'Create Post' : 'Edit Post' }}
+    </span>
+  </div>
+
+  <div class="field">
+    <label for="title" class="label">Title</label>
+    <input id="title" type="text" pInputText [(ngModel)]="post().title" required autofocus />
+    <small class="error" *ngIf="submitted() && !post().title">Title is required.</small>
+  </div>
+
+  <div class="field">
+    <label for="description" class="label">Description</label>
+    <textarea id="description" pTextarea [(ngModel)]="post().description" required rows="4"></textarea>
+    <small class="error" *ngIf="submitted() && !post().description">Description is required.</small>
+  </div>
+
+  <div class="field">
+    <span class="label">Category</span>
+    <div class="categories">
+      <div class="category" *ngFor="let c of categories; trackBy: trackByCat">
+        <p-radiobutton [inputId]="'cat-' + c" name="category" [value]="c" [(ngModel)]="post().category"></p-radiobutton>
+        <label [for]="'cat-' + c">{{ c }}</label>
+      </div>
+    </div>
+    <small class="error" *ngIf="submitted() && !post().category">Category is required.</small>
+  </div>
+
+  <div class="field">
+    <label for="createdBy" class="label">Author</label>
+    <p-select
+      inputId="createdBy"
+      [options]="userOptions"
+      optionLabel="userName"
+      [(ngModel)]="post().CreatedBy"
+      [showClear]="true"
+      placeholder="Select a user">
+    </p-select>
+    <small class="error" *ngIf="submitted() && !post().CreatedBy">Author is required.</small>
+  </div>
+
+  <div class="actions">
+    <button pButton type="button" label="Cancel" (click)="onCancel()" severity="secondary"></button>
+    <button pButton type="button" [label]="mode() === 'create' ? 'Create' : 'Save'" (click)="onSave()"></button>
+  </div>
+</div>
