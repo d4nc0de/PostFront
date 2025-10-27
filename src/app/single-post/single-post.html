@@ -1,0 +1,53 @@
+<div class="card">
+    <p-panel *ngIf="post(); else notFound">
+        <ng-template #header>
+            <div class="flex items-center gap-2">
+                <p-avatar label="{{author()?.nombre.slice(0,1).toUpperCase()}}" shape="circle" />
+                <span class="font-bold">{{author().nombre}}</span>
+            </div>
+        </ng-template>
+        <ng-template #footer>
+            <div class="flex flex-wrap items-center content-center justify-end gap-2">
+                <i class="pi pi-comments"></i>
+                <p>{{comments().length}} Comentarios</p>
+            </div>
+        </ng-template>
+        <ng-template #icons>
+            <p-button icon="pi pi-cog" severity="secondary" rounded text (click)="menu.toggle($event)" />
+            <p-menu #menu id="config_menu" [model]="items" [popup]="true" />
+        </ng-template>
+        <p class="m-0">
+            {{ post()?.contenido }}
+        </p>
+    </p-panel>
+
+    <p-panel *ngFor="let comment of comments()">
+        <ng-template #header>
+            <div class="flex items-center gap-2">
+                <p-avatar label="{{getUser(comment.idu_hace)?.nombre.slice(0,1).toUpperCase()}}" shape="circle" />
+                <span class="font-bold">{{getUser(comment.idu_hace)?.nombre}}</span>
+            </div>
+        </ng-template>
+        <ng-template #footer>
+            <div class="flex flex-wrap items-center content-center justify-end gap-2">
+                <i [ngClass]="['pi', comment.likeNotLike ? 'pi-thumbs-up-fill' : 'pi-thumbs-down-fill']"></i>
+                <i>{{ comment.fechorCom | date: 'short' }}</i>
+            </div>
+        </ng-template>
+        <ng-template #icons>
+            <p-button icon="pi pi-cog" severity="secondary" rounded text (click)="menu.toggle($event)" />
+            <p-menu #menu id="config_menu" [model]="items" [popup]="true" />
+        </ng-template>
+        <p class="m-0">
+            {{ comment.ContenidoCom }}
+        </p>
+    </p-panel>
+
+    <ng-template #notFound>
+        <p-card header="404">
+            <p class="m-0">
+                No se encontró el post solicitado.
+            </p>
+        </p-card>
+    </ng-template>
+</div>
