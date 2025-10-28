@@ -21,79 +21,67 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { SplitterModule } from 'primeng/splitter';
 import { TabsModule } from 'primeng/tabs';
 import { ToolbarModule } from 'primeng/toolbar';
+import { PostService } from '../service/posts.service';
+import { UserService } from '../service/users.service';
 
 @Component({
   selector: 'app-home',
-  imports: [     CommonModule,
-        FormsModule,
-        ToolbarModule,
-        ButtonModule,
-        RippleModule,
-        SplitButtonModule,
-        AccordionModule,
-        FieldsetModule,
-        MenuModule,
-        InputTextModule,
-        DividerModule,
-        SplitterModule,
-        PanelModule,
-        TabsModule,
-        IconFieldModule,
-        InputIconModule,
-        AvatarModule
+  imports: [
+    CommonModule,
+    FormsModule,
+    ToolbarModule,
+    ButtonModule,
+    RippleModule,
+    SplitButtonModule,
+    AccordionModule,
+    FieldsetModule,
+    MenuModule,
+    InputTextModule,
+    DividerModule,
+    SplitterModule,
+    PanelModule,
+    TabsModule,
+    IconFieldModule,
+    InputIconModule,
+    AvatarModule
   ],
   providers: [DialogService],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
 export class Home {
-   ref?: DynamicDialogRef;
+  ref?: DynamicDialogRef;
 
-  users: User[] = [
-    { id: 0, userName: 'alice', email: 'alice@mail.com', password: '' },
-    { id: 0, userName: 'bob', email: 'bob@mail.com', password: '' }
-  ];
+  constructor(
+    private dialogService: DialogService,
+    private userService: UserService,
+    private postService: PostService
+  ) { }
 
-  posts: post[] = [
+  users: User[] = [];
+  posts: post[] = [];
+
+  items: MenuItem[] = [
     {
-      id: 0,
-      title: 'First Post',
-      description: 'Hello world',
-      category: 'Accessories',
-      CreatedBy: this.users[0],
-      comments: [
-        {
-          id: 0,
-          content: 'Prueba',
-          createdBy: this.users[0]
-        }
-      ]
+      label: 'Save',
+      icon: 'pi pi-check'
+    },
+    {
+      label: 'Update',
+      icon: 'pi pi-upload'
+    },
+    {
+      label: 'Delete',
+      icon: 'pi pi-trash'
+    },
+    {
+      label: 'Home Page',
+      icon: 'pi pi-home'
     }
   ];
 
-    items: MenuItem[] = [
-        {
-            label: 'Save',
-            icon: 'pi pi-check'
-        },
-        {
-            label: 'Update',
-            icon: 'pi pi-upload'
-        },
-        {
-            label: 'Delete',
-            icon: 'pi pi-trash'
-        },
-        {
-            label: 'Home Page',
-            icon: 'pi pi-home'
-        }
-    ];
 
-     constructor(private dialogService: DialogService) {}
-
-
-     openCreate() {
+  openCreate() {
     this.ref = this.dialogService.open(AddEditPostDialog, {
       header: 'New Post',
       width: '40rem',
@@ -105,6 +93,11 @@ export class Home {
     this.ref.onClose.subscribe((result?: post) => {
       if (result) this.posts = [result, ...this.posts];
     });
+  }
+
+  ngOnInit() {
+    this.posts = this.postService.getPosts();
+    this.users = this.userService.getUsers();
   }
 
   openEdit(index: number) {
@@ -127,5 +120,9 @@ export class Home {
 
   ngOnDestroy() {
     this.ref?.close();
+  }
+
+  authorizedCommentsFromPost(post: post) {
+    return post.comments?.filter(c => c.authorizedDate) || [];
   }
 }

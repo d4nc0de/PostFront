@@ -20,38 +20,40 @@
 
     <div class="flex flex-col gap-6">
         <div class="card post-card" *ngFor="let post of posts">
-            <p-panel [toggleable]="false" styleClass="post-panel">
-                <ng-template pTemplate="header">
-                    <div class="post-header">
-                        <div class="post-header-left">
-                            <p-avatar class="post-avatar"
-                                [label]="(post?.CreatedBy?.userName || 'U') | slice:0:1 | uppercase" size="large"
-                                shape="circle">
-                            </p-avatar>
+                <p-panel [toggleable]="false" styleClass="post-panel">
+                    <ng-template pTemplate="header">
+                        <div class="post-header">
+                            <div class="post-header-left">
+                                <p-avatar class="post-avatar"
+                                    [label]="(post?.CreatedBy?.userName || 'U') | slice:0:1 | uppercase" size="large"
+                                    shape="circle">
+                                </p-avatar>
 
-                            <div class="post-meta">
-                                <div class="post-meta-top">
-                                    <span class="post-author">{{ post?.CreatedBy?.userName }}</span>
-                                    <span class="post-dot">•</span>
-                                    <span class="post-badge">{{ post?.category }}</span>
+                                <div class="post-meta">
+                                    <div class="post-meta-top">
+                                        <span class="post-author">{{ post?.CreatedBy?.userName }}</span>
+                                        <span class="post-dot">•</span>
+                                        <span class="post-badge">{{ post?.category }}</span>
+                                    </div>
+                                    <span class="post-submeta">publicó un post</span>
                                 </div>
-                                <span class="post-submeta">publicó un post</span>
+                            </div>
+
+                            <div class="post-header-actions">
+                                <p-button icon="pi pi-ellipsis-h" text rounded severity="secondary"></p-button>
                             </div>
                         </div>
+                    </ng-template>
 
-                        <div class="post-header-actions">
-                            <p-button icon="pi pi-ellipsis-h" text rounded severity="secondary"></p-button>
+                    <a href="/posts/{{post?.id}}">
+                        <div class="post-content">
+                            <h3 class="post-title">{{ post?.title }}</h3>
+                            <p class="post-desc">{{ post?.description }}</p>
                         </div>
-                    </div>
-                </ng-template>
-
-                <div class="post-content">
-                    <h3 class="post-title">{{ post?.title }}</h3>
-                    <p class="post-desc">{{ post?.description }}</p>
-                </div>
+                    </a>
 
                 <div class="post-comments">
-                    <ng-container *ngIf="post.comments.length && post && post.comments; else noComments">
+                    <ng-container *ngIf="post && authorizedCommentsFromPost(post).length > 0; else noComments">
                         <div class="comment-row">
                             <p-avatar class="comment-avatar"
                                 [label]="(post?.comments?.[0]?.createdBy?.userName || 'U') | slice:0:1 | uppercase"
@@ -68,9 +70,11 @@
                             </div>
                         </div>
 
-                        <p-button icon="pi pi-comments" label="Ver más comentarios" text size="small"
-                            class="see-more-btn">
-                        </p-button>
+                        <a href="/posts/{{post?.id}}">
+                            <p-button class="pi pi-comments" label="Ver más comentarios" text size="small"
+                                class="see-more-btn">
+                            </p-button>
+                        </a>
                     </ng-container>
 
                     <ng-template #noComments>

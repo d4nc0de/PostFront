@@ -1,0 +1,85 @@
+<div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6">
+        <div class="card post-card" *ngIf="post; else notFound">
+            <p-panel [toggleable]="false" styleClass="post-panel">
+                <ng-template pTemplate="header">
+                    <div class="post-header">
+                        <div class="post-header-left">
+                            <p-avatar class="post-avatar"
+                                [label]="(post.CreatedBy.userName || 'U') | slice:0:1 | uppercase" size="large"
+                                shape="circle">
+                            </p-avatar>
+
+                            <div class="post-meta">
+                                <div class="post-meta-top">
+                                    <span class="post-author">{{ post.CreatedBy.userName }}</span>
+                                    <span class="post-dot">•</span>
+                                    <span class="post-badge">{{ post.category }}</span>
+                                </div>
+                                <span class="post-submeta">publicó un post</span>
+                            </div>
+                        </div>
+
+                        <div class="post-header-actions">
+                            <p-button icon="pi pi-ellipsis-h" text rounded severity="secondary"></p-button>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <div class="post-content">
+                    <h3 class="post-title">{{ post.title }}</h3>
+                    <p class="post-desc">{{ post.description }}</p>
+                </div>
+            </p-panel>
+        </div>
+    </div>
+
+    <div class="card" *ngIf="post;">
+        <div class="font-semibold text-xl mb-4">Comentarios</div>
+        <p-toolbar>
+            <ng-template #start>
+                <p-button icon="pi pi-plus" (click)="openCreateComment()" class="mr-2" severity="secondary" text />
+            </ng-template>
+
+            <ng-template #end>
+            </ng-template>
+        </p-toolbar>
+
+        <div class="post-comments">
+            <ng-container *ngFor="let comment of authorizedComments; let i = index; else noComments">
+                <div class="comment-row">
+                    <p-avatar class="comment-avatar"
+                        [label]="(comment?.createdBy?.userName || 'U') | slice:0:1 | uppercase" size="normal"
+                        shape="circle">
+                    </p-avatar>
+
+                    <div class="comment-body">
+                        <div class="comment-author">
+                            {{ comment?.createdBy?.userName }}
+                        </div>
+                        <div class="comment-text">
+                            {{ comment?.content }}
+                        </div>
+                        <div class="comment-date">
+                            {{ comment?.authorizedDate | date: 'short' }}
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+            <ng-template #noComments>
+                <p class="no-comments">Sin comentarios aún.</p>
+            </ng-template>
+        </div>
+    </div>
+
+    <ng-template #notFound>
+        <div class="card">
+            <div class="font-semibold text-xl mb-4">No se encontró el post</div>
+            <p>El post que estás buscando no existe o ha sido eliminado.</p>
+        </div>
+
+    </ng-template>
+
+
+</div>
