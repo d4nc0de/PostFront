@@ -1,0 +1,37 @@
+<div class="dialog-wrapper">
+  <div class="header">
+    <span class="mode">
+      {{ mode() === 'create' ? 'Add Comment' : 'Edit Comment' }}
+    </span>
+  </div>
+
+  <div class="field">
+    <label for="content" class="label">Content</label>
+    <input id="content" type="text" pInputText [(ngModel)]="comment().content" required autofocus />
+    <small class="error" *ngIf="submitted() && !comment().content">Content is required.</small>
+  </div>
+
+  <div class="field">
+    <label for="liked" class="label">Liked/Disliked?</label>
+    <p-togglebutton id="liked" [(ngModel)]="comment().liked" onLabel="Liked" offLabel="Disliked" class="w-24" />
+
+  </div>
+
+  <div class="field">
+    <label for="createdBy" class="label">Author</label>
+    <p-select
+      inputId="createdBy"
+      [options]="userOptions"
+      optionLabel="userName"
+      [(ngModel)]="comment().createdBy"
+      [showClear]="true"
+      placeholder="Select a user">
+    </p-select>
+    <small class="error" *ngIf="submitted() && !comment().createdBy">Author is required.</small>
+  </div>
+
+  <div class="actions">
+    <button pButton type="button" label="Cancel" (click)="onCancel()" severity="secondary"></button>
+    <button pButton type="button" [label]="mode() === 'create' ? 'Create' : 'Save'" (click)="onSave()"></button>
+  </div>
+</div>
