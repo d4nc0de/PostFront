@@ -23,6 +23,8 @@ import { TabsModule } from 'primeng/tabs';
 import { ToolbarModule } from 'primeng/toolbar';
 import { PostService } from '../service/posts.service';
 import { UserService } from '../service/users.service';
+import { TieredMenuModule } from 'primeng/tieredmenu';
+import { ConfirmActionDialog } from '@/dialogs/confirm-dialom/confirm-action-dialog/confirm-action-dialog';
 
 @Component({
   selector: 'app-home',
@@ -43,7 +45,8 @@ import { UserService } from '../service/users.service';
     TabsModule,
     IconFieldModule,
     InputIconModule,
-    AvatarModule
+    AvatarModule,
+    TieredMenuModule
   ],
   providers: [DialogService],
   templateUrl: './home.html',
@@ -60,6 +63,7 @@ export class Home {
 
   users: User[] = [];
   posts: post[] = [];
+  postActionsMap = new Map<number, MenuItem[]>();
 
   items: MenuItem[] = [
     {
@@ -80,6 +84,20 @@ export class Home {
     }
   ];
 
+  getPostActions(_post: post): MenuItem[] {
+    return [
+      {
+        label: 'Edit Post',
+        icon: 'pi pi-pencil',
+        command: () => this.openEdit(_post)
+      },
+      {
+        label: 'Delete Post',
+        icon: 'pi pi-trash',
+        command: () => this.openDelete(_post)
+      }
+    ];
+  }
 
   openCreate() {
     this.ref = this.dialogService.open(AddEditPostDialog, {
@@ -98,10 +116,16 @@ export class Home {
   ngOnInit() {
     this.posts = this.postService.getPosts();
     this.users = this.userService.getUsers();
+
+    this.posts.forEach(p => {
+      this.postActionsMap.set(p.id, this.getPostActions(p));
+    });
   }
 
-  openEdit(index: number) {
-    const selected = this.posts[index];
+  openEdit(post: post) {
+    // TODO: Hacerlo con API
+    const postIndex = this.posts.findIndex(p => p.id === post.id);
+    const selected = this.posts[postIndex];
 
     this.ref = this.dialogService.open(AddEditPostDialog, {
       header: 'Edit Post',
@@ -113,8 +137,23 @@ export class Home {
 
     this.ref.onClose.subscribe((result?: post) => {
       if (result) {
-        this.posts = this.posts.map((p, i) => (i === index ? result : p));
+        this.posts = this.posts.map((p, i) => (i === postIndex ? result : p));
       }
+    });
+  }
+
+  openDelete(post: post) {
+    // TODO: Hacerlo con API
+    const postIndex = this.posts.findIndex(p => p.id === post.id);
+
+    this.ref = this.dialogService.open(ConfirmActionDialog, {
+      modal: true,
+      closable: false,
+      data: { confirmation: "Are you sure you want to delete this post?" }
+    });
+
+    this.ref.onClose.subscribe((result?: boolean) => {
+      if (result) this.posts.splice(postIndex, 1);
     });
   }
 

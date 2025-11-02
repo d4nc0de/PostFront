@@ -100,10 +100,9 @@ export class Post {
 
   openDeleteComment(comment: comment) {
     this.ref = this.dialogService.open(ConfirmActionDialog, {
-      header: '',
       modal: true,
       closable: false,
-      data: { confirmation: "Are you sure you want to delete this comment?", comment }
+      data: { confirmation: "Are you sure you want to delete this comment?" }
     });
 
     this.ref.onClose.subscribe((result?: boolean) => {

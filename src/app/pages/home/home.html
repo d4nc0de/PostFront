@@ -40,7 +40,8 @@
                             </div>
 
                             <div class="post-header-actions">
-                                <p-button icon="pi pi-ellipsis-h" text rounded severity="secondary"></p-button>
+                                <p-menu #menu [popup]="true" [model]="postActionsMap.get(post.id)" appendTo="body" (mousedown)="$event.stopPropagation()"/>
+                                <p-button icon="pi pi-ellipsis-h" text rounded severity="secondary" (click)="menu.toggle($event)"/>
                             </div>
                         </div>
                     </ng-template>
