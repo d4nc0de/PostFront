@@ -4,16 +4,8 @@
         <p-toolbar>
             <ng-template #start>
                 <p-button icon="pi pi-plus" (click)="openCreate()" class="mr-2" severity="secondary" text />
-                <p-button icon="pi pi-filter" class="mr-2" severity="secondary" text />
-            </ng-template>
-
-            <ng-template #end>
-                <p-iconfield>
-                    <p-inputicon>
-                        <i class="pi pi-search"></i>
-                    </p-inputicon>
-                    <input pInputText placeholder="Search" />
-                </p-iconfield>
+                <p-button label='Filtrar por autor' icon="pi pi-filter" class="mr-2" severity="secondary" text (click)="filterMenu.toggle($event)"/>
+                <p-menu #filterMenu [popup]="true" [model]="usersSelection"/>
             </ng-template>
         </p-toolbar>
     </div>

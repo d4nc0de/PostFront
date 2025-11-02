@@ -64,6 +64,15 @@ export class Home {
   users: User[] = [];
   posts: post[] = [];
   postActionsMap = new Map<number, MenuItem[]>();
+  usersSelection: MenuItem[] = [
+    {
+      label: 'Sin filtro',
+      icon: 'pi pi-users',
+      command: () => {
+        this.posts = this.postService.getPosts();
+      }
+    }
+  ];
 
   items: MenuItem[] = [
     {
@@ -117,6 +126,14 @@ export class Home {
     this.posts = this.postService.getPosts();
     this.users = this.userService.getUsers();
 
+    this.users.forEach(u => {
+      this.usersSelection.push({
+        label: u.userName,
+        icon: 'pi pi-user',
+        command: () => this.filterView(u)
+      });
+    });
+
     this.posts.forEach(p => {
       this.postActionsMap.set(p.id, this.getPostActions(p));
     });
@@ -155,6 +172,11 @@ export class Home {
     this.ref.onClose.subscribe((result?: boolean) => {
       if (result) this.posts.splice(postIndex, 1);
     });
+  }
+
+  filterView(user: User) {
+    // TODO: Hacerlo con API
+    this.posts = this.postService.getPosts().filter(p => p.CreatedBy.id === user.id);
   }
 
   ngOnDestroy() {

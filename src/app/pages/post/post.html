@@ -38,12 +38,14 @@
             </ng-template>
 
             <ng-template #end>
+                <p-button label='Mostrar/ocultar comentarios sin autorizar' icon="pi pi-exclamation-triangle" class="mr-2"
+                    severity="secondary" text (click)="toggleUnauthorizedComments()" />
             </ng-template>
         </p-toolbar>
 
         <div class="post-comments">
-            <ng-container *ngFor="let comment of authorizedComments; let i = index; else noComments">
-                <div class="comment-row">
+            <ng-container *ngFor="let comment of authorizedComments; let i = index;">
+                <div class="comment-row {{!comment.authorizedBy ? 'comment-unauthorized' : ''}}">
                     <p-avatar class="comment-avatar"
                         [label]="(comment?.createdBy?.userName || 'U') | slice:0:1 | uppercase" size="normal"
                         shape="circle">
@@ -57,26 +59,33 @@
                             {{ comment?.content }}
                         </div>
                         <div class="comment-date">
-                            {{ comment?.authorizedDate | date: 'short' }}
+                            {{ comment?.createdAt | date: 'short' }}
                         </div>
                     </div>
 
                     <div class="comment-meta">
+                        <div class="comment-authorization">
+                            <div class="auth-by">
+                                {{ comment?.authorizedBy ? "Autorizado por " + comment?.authorizedBy?.userName + ',' :
+                                "Comentario aún no autorizado." }}
+                            </div>
+                            <div class="auth-date">
+                                {{ comment?.authorizedBy ? (comment?.authorizedDate | date: 'short') : '' }}
+                            </div>
+                        </div>
                         <div class="flex flex-wrap items-center content-center justify-end gap-2">
                             <i [ngClass]="['pi', comment.liked ? 'pi-thumbs-up-fill' : 'pi-thumbs-down-fill']"></i>
                         </div>
 
                         <div class="comment-header-actions">
-                            <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="openEditComment(comment)" />
-                            <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="openDeleteComment(comment)" />
+                            <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                                (click)="openEditComment(comment)" />
+                            <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                                (click)="openDeleteComment(comment)" />
                         </div>
                     </div>
                 </div>
             </ng-container>
-
-            <ng-template #noComments>
-                <p class="no-comments">Sin comentarios aún.</p>
-            </ng-template>
         </div>
     </div>
 

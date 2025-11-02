@@ -28,7 +28,6 @@ export class CommentService {
       { id: 7, idp: 3, content: 'Buen trabajo!', createdBy: this.userService.getSingleUser(0), createdAt: new Date('2025-04-01T09:00:00'), liked: true, authorizedDate: null, authorizedBy: null },
       { id: 8, idp: 0, content: 'No estoy de acuerdo', createdBy: this.userService.getSingleUser(1), createdAt: new Date('2025-04-10T13:00:00'), liked: false, authorizedDate: null, authorizedBy: null },
       { id: 9, idp: 3, content: 'Súper útil, gracias', createdBy: this.userService.getSingleUser(0), createdAt: new Date('2025-05-01T16:45:00'), liked: true, authorizedDate: null, authorizedBy: null },
-
     ];
   }
 }

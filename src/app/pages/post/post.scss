@@ -86,12 +86,26 @@
 .comment-body { line-height: 1.2; }
 .comment-author { font-weight: 600; font-size: .9rem; }
 .comment-text { font-size: .9rem; color: var(--text-color, #1f2937); }
-.comment-date { font-size: .9rem; color: var(--text-color-secondary, #64748b); }
+.comment-date, .auth-date, .auth-by { font-size: .9rem; color: var(--text-color-secondary, #64748b); }
 .see-more-btn { margin-top: .35rem; padding-left: 0; }
 
 .comment-meta {
   display: flex; gap: 3rem; align-items: center; margin-top: .25rem;
   margin-left: auto;
+}
+.comment-authorization {
+  opacity: 0.5;
+}
+
+.comment-unauthorized {
+  font-style: italic;
+  opacity: .5;
+
+  transition: opacity .2s ease;
+}
+
+.comment-unauthorized:hover {
+  opacity: 1;
 }
 
 /* Estado vacío */

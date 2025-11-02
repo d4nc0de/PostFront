@@ -61,6 +61,7 @@ export class Post {
   comments: comment[] = [];
   post: post | undefined;
   ref?: DynamicDialogRef;
+  showUnauthorizedComments = false;
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -110,7 +111,11 @@ export class Post {
     });
   }
 
+  toggleUnauthorizedComments() {
+    this.showUnauthorizedComments = !this.showUnauthorizedComments;
+  }
+
   get authorizedComments() {
-    return this.comments?.filter(c => c.authorizedDate) || [];
+    return this.showUnauthorizedComments ? this.comments : this.comments?.filter(c => c.authorizedDate) || [];
   }
 }
