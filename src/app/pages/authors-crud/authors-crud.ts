@@ -25,6 +25,7 @@ import { EditionService } from '../service/editions.service';
 import { CopyService } from '../service/copies.service';
 import { Copy } from '@/Models/copy.model';
 import { AuthorService } from '../service/authors.service';
+import { Author } from '@/Models/author.model';
 
 interface Column {
   field: string;
@@ -38,7 +39,7 @@ interface ExportColumn {
 }
 
 @Component({
-  selector: 'app-books-crud',
+  selector: 'app-authors-crud',
   imports: [CommonModule,
     TableModule,
     FormsModule,
@@ -58,22 +59,21 @@ interface ExportColumn {
     IconFieldModule,
     ConfirmDialogModule],
   providers: [MessageService, BookService, ConfirmationService],
-  templateUrl: './books-crud.html',
-  styleUrl: './books-crud.scss'
+  templateUrl: './authors-crud.html',
+  styleUrl: './authors-crud.scss'
 })
-export class BooksCrud {
+export class AuthorsCrud {
 
-  bookDialog: boolean = false;
+
+  authorDialog: boolean = false;
   isNew: boolean = false;
 
-  books = signal<Book[]>([]);
-  editions: Edition[] = [];
-  copies: Copy[] = [];
+  authors = signal<Author[]>([]);
 
-  book!: Book;
-  unchangedBook!: Book;
+  author!: Author;
+  unchangedAuthor!: Author;
 
-  selectedBooks!: Book[] | null;
+  selectedAuthors!: Author[] | null;
 
   submitted: boolean = false;
 
@@ -99,13 +99,9 @@ export class BooksCrud {
   }
 
   loadDemoData() {
-    const books = this.bookService.getBooks()
-    const editions = this.editionsService.getEditions();
-    const copies = this.copiesService.getCopies();
+    const authors = this.authorService.getAuthors()
 
-    this.books.set(books);
-    this.editions = editions;
-    this.copies = copies;
+    this.authors.set(authors);
 
     this.cols = [
       { field: 'titulo', header: 'Título', customExportHeader: 'titulo' },
@@ -115,46 +111,38 @@ export class BooksCrud {
     this.exportColumns = this.cols.map((col) => ({ title: col.header, dataKey: col.field }));
   }
 
-  getEdition(book: Book | undefined): Edition | undefined {
-    return this.editions.find(edition => edition.libro.titulo === book?.titulo);
-  }
-
-  getCopy(edition: Edition | undefined): Copy | undefined {
-    return this.copies.find(copy => copy.edition.isbn === edition?.isbn);
-  }
-
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
   openNew() {
-    this.book = { titulo: '', author: { nombre: '' } };
+    this.author = { nombre: '' };
     this.submitted = false;
-    this.bookDialog = true;
+    this.authorDialog = true;
     this.isNew = true;
   }
 
-  editBook(book: Book) {
+  editAuthor(author: Author) {
     this.isNew = false;
-    this.unchangedBook = { ...book }; // Store the original book for comparison
-    this.book = structuredClone(book);
-    this.bookDialog = true;
+    this.unchangedAuthor = { ...author }; // Store the original author for comparison
+    this.author = structuredClone(author);
+    this.authorDialog = true;
 
     console.log("editing!");
   }
 
-  deleteSelectedBooks() {
+  deleteSelectedAuthors() {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete the selected books?',
+      message: 'Are you sure you want to delete the selected authors?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.books.set(this.books().filter((val) => !this.selectedBooks?.includes(val)));
-        this.selectedBooks = null;
+        this.authors.set(this.authors().filter((val) => !this.selectedAuthors?.includes(val)));
+        this.selectedAuthors = null;
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
-          detail: 'Books Deleted',
+          detail: 'Authors Deleted',
           life: 3000
         });
       }
@@ -162,38 +150,26 @@ export class BooksCrud {
   }
 
   hideDialog() {
-    this.bookDialog = false;
+    this.authorDialog = false;
     this.submitted = false;
   }
 
-  deleteBook(book: Book) {
+  deleteAuthor(author: Author) {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete ' + book.titulo + '?',
+      message: 'Are you sure you want to delete ' + author.nombre + '?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.books.set(this.books().filter((val) => val.titulo !== book.titulo));
-        this.book = { titulo: '', author: { nombre: '' } };
+        this.authors.set(this.authors().filter((val) => val.nombre !== author.nombre));
+        this.author = { nombre: '' };
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
-          detail: 'Book Deleted',
+          detail: 'Author Deleted',
           life: 3000
         });
       }
     });
-  }
-
-  findIndexByTitle(title: string): number {
-    let index = -1;
-    for (let i = 0; i < this.books().length; i++) {
-      if (this.books()[i].titulo === title) {
-        index = i;
-        break;
-      }
-    }
-
-    return index;
   }
 
   createId(): string {
@@ -207,56 +183,37 @@ export class BooksCrud {
 
   saveBook() {
     this.submitted = true;
-    let _books = this.books();
+    let _authors = this.authors();
 
-    if (this.book.titulo.trim().length === 0 || this.book.author?.nombre.trim().length === 0) return;
+    if (this.author.nombre.trim().length === 0) return;
 
     if (this.isNew) {
-      let author = this.authorService.getSingleAuthor(this.book.author?.nombre)
-      if (!author) return this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Author not found',
-        life: 3000
-      });
-
       // TODO: Implementar API
-      this.book.titulo = this.book.titulo?.trim();
-      this.book.author = author;
+      this.author = { nombre: this.author.nombre?.trim() };
 
       this.messageService.add({
         severity: 'success',
         summary: 'Successful',
-        detail: 'Book Created',
+        detail: 'Author Created',
         life: 3000
       });
-      this.books.set([..._books, this.book]);
+      this.authors.set([..._authors, this.author]);
     } else {
-      console.log("updating", this.book);
+      console.log("updating", this.author);
       // TODO: Implementar API
-      let i = _books.findIndex(b => b.titulo === this.unchangedBook.titulo);
+      let i = _authors.findIndex(b => b.nombre === this.unchangedAuthor.nombre);
+      _authors[i] = this.author;
 
-      if (!this.authorService.getSingleAuthor(this.book.author?.nombre)) {
-        return this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Author not found',
-          life: 3000
-        });
-      }
-
-      _books[i] = this.book;
-
-      this.books.set(_books);
+      this.authors.set(_authors);
       this.messageService.add({
         severity: 'success',
         summary: 'Successful',
-        detail: 'Book Updated',
+        detail: 'Author Updated',
         life: 3000
       });
     }
 
-    this.bookDialog = false;
-    this.book = { titulo: '', author: { nombre: '' } };
+    this.authorDialog = false;
+    this.author = { nombre: '' };
   }
 }
