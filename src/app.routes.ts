@@ -7,6 +7,7 @@ import { Notfound } from './app/pages/notfound/notfound';
 import { Home } from '@/pages/home/home';
 import { Userscrud } from '@/pages/userscrud/userscrud';
 import { Post } from '@/pages/post/post';
+import { BooksCrud } from '@/pages/books-crud/books-crud';
 
 export const appRoutes: Routes = [
     {
@@ -15,6 +16,7 @@ export const appRoutes: Routes = [
         children: [
             { path: '', component: Home },
             { path: 'userscrud', component: Userscrud },
+            { path: 'bookscrud', component: BooksCrud },
             { path: 'uikit', loadChildren: () => import('./app/pages/uikit/uikit.routes') },
             { path: 'documentation', component: Documentation },
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },

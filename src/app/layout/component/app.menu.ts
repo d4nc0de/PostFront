@@ -23,7 +23,8 @@ export class AppMenu {
             {
                 label: 'Home',
                 items: [{ label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
-                { label: 'Gestión de Usuarios', icon: 'pi pi-fw pi-chart-line', routerLink: ['/userscrud'] }]
+                { label: 'Gestión de Usuarios', icon: 'pi pi-fw pi-chart-line', routerLink: ['/userscrud'] },
+                { label: 'Gestión de Libros', icon: 'pi pi-fw pi-book', routerLink: ['/bookscrud'] }],
             },
             {
                 label: 'UI Components',

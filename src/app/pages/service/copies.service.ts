@@ -19,9 +19,9 @@ export class CopyService {
 
   getDummyCopies(): Copy[] {
     return [
-      { numero: 1, edition: this.editionService.getSingleEdition(0) },
-      { numero: 2, edition: this.editionService.getSingleEdition(1) },
-      { numero: 3, edition: this.editionService.getSingleEdition(2) }
+      { numero: 1, edition: this.editionService.getSingleEdition(9780307389732) },
+      { numero: 2, edition: this.editionService.getSingleEdition(9788420400590) },
+      { numero: 3, edition: this.editionService.getSingleEdition(9780544003415) }
     ];
   }
 }

@@ -1,0 +1,78 @@
+<p-toast />
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="Registrar" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+        <p-button severity="secondary" label="Eliminar" icon="pi pi-trash" outlined (onClick)="deleteSelectedBooks()" [disabled]="!selectedBooks || !selectedBooks.length" />
+    </ng-template>
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="books()"
+    [rows]="10"
+    [columns]="cols"
+    [paginator]="true"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedBooks"
+    [rowHover]="true"
+    dataKey="titulo"
+    currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} libros"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Gestionar Libros</h5>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem"><p-tableHeaderCheckbox /></th>
+            <th style="min-width: 16rem">Título</th>
+            <th style="min-width:16rem">Autor</th>
+            <th style="min-width:16rem">ISBN</th>
+            <th style="min-width:16rem">Año</th>
+            <th style="min-width:16rem">Idioma</th>
+            <th style="min-width:16rem">#Copia</th>
+            <th>Acciones</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-book>
+        <tr>
+            <td style="width: 3rem"><p-tableCheckbox [value]="book"/></td>
+            <td style="min-width: 12rem">{{ book.titulo }}</td>
+            <td style="min-width: 16rem">{{ book.author?.nombre }}</td>
+            <td style="min-width: 16rem">{{ getEdition(book)?.isbn }}</td>
+            <td style="min-width: 16rem">{{ getEdition(book)?.year }}</td>
+            <td style="min-width: 16rem">{{ getEdition(book)?.lang }}</td>
+            <td style="min-width: 16rem">{{ getCopy(getEdition(book))?.numero }}</td>
+            <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editBook(book)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteBook(book)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="bookDialog" [style]="{ width: '450px' }" header="Ingrese datos del libro" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+            <div>
+                <label for="bookTitle" class="block font-bold mb-3">Título</label>
+                <input type="text" pInputText id="bookTitle" [(ngModel)]="book.titulo" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !book.titulo">*Este campo es obligatorio.</small>
+            </div>
+            <div>
+                <label for="authorName" class="block font-bold mb-3">Autor</label>
+                <input type="text" pInputText id="authorName" [(ngModel)]="book.author.nombre" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !book.author.nombre">*Este campo es obligatorio.</small>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Save" icon="pi pi-check" (click)="saveBook()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
