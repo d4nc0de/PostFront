@@ -1,8 +1,9 @@
 import { Copy } from "./copy.model";
+import { User } from "./user.model";
 
 export interface Prestamo {
-    user_id: number;
+    user: User;
     copia: Copy;
     fecha_prestamo: Date;
-    fecha_devolucion: Date;
+    fecha_devolucion: Date | null;
 }

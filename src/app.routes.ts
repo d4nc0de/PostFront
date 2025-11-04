@@ -11,6 +11,7 @@ import { BooksCrud } from '@/pages/books-crud/books-crud';
 import { AuthorsCrud } from '@/pages/authors-crud/authors-crud';
 import { CopiesCrud } from '@/pages/copies-crud/copies-crud';
 import { EditionsCrud } from '@/pages/editions-crud/editions-crud';
+import { PrestamosCrud } from '@/pages/prestamos-crud/prestamos-crud';
 
 export const appRoutes: Routes = [
     {
@@ -19,6 +20,7 @@ export const appRoutes: Routes = [
         children: [
             { path: '', component: Home },
             { path: 'userscrud', component: Userscrud },
+            { path: 'prestamos', component: PrestamosCrud },
             { path: 'bookscrud', component: BooksCrud },
             { path: 'authorscrud', component: AuthorsCrud },
             { path: 'copiescrud', component: CopiesCrud },

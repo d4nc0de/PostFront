@@ -25,14 +25,18 @@ import { EditionService } from '../service/editions.service';
 import { CopyService } from '../service/copies.service';
 import { Copy } from '@/Models/copy.model';
 import { AuthorService } from '../service/authors.service';
+import { Prestamo } from '@/Models/prestamo.model';
+import { PrestamoService } from '../service/prestamos.service';
+import { UserService } from '../service/users.service';
 
 interface Column {
   field: string;
   header: string;
   customExportHeader?: string;
 }
+
 @Component({
-  selector: 'app-books-crud',
+  selector: 'app-prestamos-crud',
   imports: [CommonModule,
     TableModule,
     FormsModule,
@@ -52,21 +56,22 @@ interface Column {
     IconFieldModule,
     ConfirmDialogModule],
   providers: [MessageService, BookService, ConfirmationService],
-  templateUrl: './books-crud.html',
-  styleUrl: './books-crud.scss'
+  templateUrl: './prestamos-crud.html',
+  styleUrl: './prestamos-crud.scss'
 })
-export class BooksCrud {
-  bookDialog: boolean = false;
+export class PrestamosCrud {
+
+  prestamoDialog: boolean = false;
   isNew: boolean = false;
 
-  books = signal<Book[]>([]);
+  prestamos = signal<Prestamo[]>([]);
   editions: Edition[] = [];
   copies: Copy[] = [];
 
-  book!: Book;
-  unchangedBook!: Book;
+  prestamo!: Prestamo;
+  unchangedPrestamo!: Prestamo;
 
-  selectedBooks!: Book[] | null;
+  selectedPrestamos!: Prestamo[] | null;
 
   submitted: boolean = false;
 
@@ -77,6 +82,8 @@ export class BooksCrud {
 
   constructor(
     private bookService: BookService,
+    private userService: UserService,
+    private prestamosService: PrestamoService,
     private authorService: AuthorService,
     private editionsService: EditionService,
     private copiesService: CopyService,
@@ -89,11 +96,11 @@ export class BooksCrud {
   }
 
   loadDemoData() {
-    const books = this.bookService.getBooks()
+    const prestamos = this.prestamosService.getPrestamos();
     const editions = this.editionsService.getEditions();
     const copies = this.copiesService.getCopies();
 
-    this.books.set(books);
+    this.prestamos.set(prestamos);
     this.editions = editions;
     this.copies = copies;
   }
@@ -111,31 +118,31 @@ export class BooksCrud {
   }
 
   openNew() {
-    this.book = { titulo: '', author: { nombre: '' } };
+    this.prestamo = { user: this.userService.getSingleUser(0), copia: this.copiesService.getSingleCopy(1), fecha_prestamo: new Date(), fecha_devolucion: null };
     this.submitted = false;
-    this.bookDialog = true;
+    this.prestamoDialog = true;
     this.isNew = true;
   }
 
-  editBook(book: Book) {
+  editPrestamo(prestamo: Prestamo) {
     this.isNew = false;
-    this.unchangedBook = { ...book }; // Store the original book for comparison
-    this.book = structuredClone(book);
-    this.bookDialog = true;
+    this.unchangedPrestamo = { ...prestamo }; // Store the original book for comparison
+    this.prestamo = structuredClone(prestamo);
+    this.prestamoDialog = true;
   }
 
-  deleteSelectedBooks() {
+  deleteSelectedPrestamos() {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete the selected books?',
+      message: 'Are you sure you want to delete the selected loan?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.books.set(this.books().filter((val) => !this.selectedBooks?.includes(val)));
-        this.selectedBooks = null;
+        this.prestamos.set(this.prestamos().filter((val) => !this.selectedPrestamos?.includes(val)));
+        this.selectedPrestamos = null;
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
-          detail: 'Books Deleted',
+          detail: 'Loans Deleted',
           life: 3000
         });
       }
@@ -143,79 +150,104 @@ export class BooksCrud {
   }
 
   hideDialog() {
-    this.bookDialog = false;
+    this.prestamoDialog = false;
     this.submitted = false;
   }
 
-  deleteBook(book: Book) {
+  deletePrestamo(prestamo: Prestamo) {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete ' + book.titulo + '?',
+      message: 'Are you sure you want to delete the selected loan?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.books.set(this.books().filter((val) => val.titulo !== book.titulo));
-        this.book = { titulo: '', author: { nombre: '' } };
+        this.prestamos.set(this.prestamos().filter((val) => val !== prestamo));
+        this.prestamo = { user: this.userService.getSingleUser(0), copia: this.copiesService.getSingleCopy(0), fecha_prestamo: new Date(), fecha_devolucion: new Date() };
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
-          detail: 'Book Deleted',
+          detail: 'Loan Deleted',
           life: 3000
         });
       }
     });
   }
-  
-  saveBook() {
-    this.submitted = true;
-    let _books = this.books();
 
-    if (this.book.titulo.trim().length === 0 || this.book.author?.nombre.trim().length === 0) return;
+  savePrestamo() {
+    this.submitted = true;
+    let _prestamos = this.prestamos();
+
+    if (this.prestamo.user.id.toString().trim().length === 0 || this.prestamo.copia.numero.toString().trim().length === 0 || this.prestamo.copia.edition.isbn.toString().trim().length === 0 || this.prestamo.fecha_prestamo.toString().trim().length === 0) return;
 
     if (this.isNew) {
-      let author = this.authorService.getSingleAuthor(this.book.author?.nombre)
-      if (!author) return this.messageService.add({
+      console.log(this.prestamo.user.id);
+      let user = this.userService.getSingleUser(Number(this.prestamo.user.id));
+      let copia = this.copiesService.getSingleCopy(Number(this.prestamo.copia.numero));
+
+      if (!user) return this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Author not found',
+        detail: 'User not found',
+        life: 3000
+      });
+
+      if (!copia) return this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Copy not found',
         life: 3000
       });
 
       // TODO: Implementar API
-      this.book.titulo = this.book.titulo?.trim();
-      this.book.author = author;
+      this.prestamo.user = user;
+      this.prestamo.copia = copia;
+      this.prestamo.fecha_prestamo = this.prestamo.fecha_prestamo || new Date();
+      this.prestamo.fecha_devolucion = this.prestamo.fecha_devolucion || null;
 
       this.messageService.add({
         severity: 'success',
         summary: 'Successful',
-        detail: 'Book Created',
+        detail: 'Loan Created',
         life: 3000
       });
-      this.books.set([..._books, this.book]);
+      this.prestamos.set([..._prestamos, this.prestamo]);
     } else {
       // TODO: Implementar API
-      let i = _books.findIndex(b => b.titulo === this.unchangedBook.titulo);
+      let i = _prestamos.findIndex(b => b.user.id === this.unchangedPrestamo.user.id && b.copia.numero === this.unchangedPrestamo.copia.numero);
 
-      if (!this.authorService.getSingleAuthor(this.book.author?.nombre)) {
-        return this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Author not found',
-          life: 3000
-        });
-      }
+      let user = this.userService.getSingleUser(Number(this.prestamo.user.id));
+      let copia = this.copiesService.getSingleCopy(Number(this.prestamo.copia.numero));
 
-      _books[i] = this.book;
+      if (!user) return this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'User not found',
+        life: 3000
+      });
 
-      this.books.set(_books);
+      if (!copia) return this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Copy not found',
+        life: 3000
+      });
+
+      this.prestamo.user = user;
+      this.prestamo.copia = copia;
+      this.prestamo.fecha_prestamo = this.prestamo.fecha_prestamo || new Date();
+      this.prestamo.fecha_devolucion = this.prestamo.fecha_devolucion || null;
+
+      _prestamos[i] = this.prestamo;
+
+      this.prestamos.set(_prestamos);
       this.messageService.add({
         severity: 'success',
         summary: 'Successful',
-        detail: 'Book Updated',
+        detail: 'Loan Updated',
         life: 3000
       });
     }
 
-    this.bookDialog = false;
-    this.book = { titulo: '', author: { nombre: '' } };
+    this.prestamoDialog = false;
+    this.prestamo = { user: this.userService.getSingleUser(0), copia: this.copiesService.getSingleCopy(1), fecha_prestamo: new Date(), fecha_devolucion: null };
   }
 }

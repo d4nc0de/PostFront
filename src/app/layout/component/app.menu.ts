@@ -25,6 +25,7 @@ export class AppMenu {
                 items: [
                     { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
                     { label: 'Gestión de Usuarios', icon: 'pi pi-fw pi-chart-line', routerLink: ['/userscrud'] },
+                    { label: 'Gestión de Préstamos', icon: 'pi pi-fw pi-inbox', routerLink: ['/prestamos'] },
                     { label: 'Gestión de Libros', icon: 'pi pi-fw pi-book', routerLink: ['/bookscrud'] },
                     { label: 'Gestión de Autores', icon: 'pi pi-fw pi-users', routerLink: ['/authorscrud'] },
                     { label: 'Gestión de Copias', icon: 'pi pi-fw pi-copy', routerLink: ['/copiescrud'] },
