@@ -1,0 +1,84 @@
+<p-toast />
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="Registrar" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+        <p-button severity="secondary" label="Eliminar" icon="pi pi-trash" outlined (onClick)="deleteSelectedEditions()" [disabled]="!selectedEditions || !selectedEditions.length" />
+    </ng-template>
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="editions()"
+    [rows]="10"
+    [columns]="cols"
+    [paginator]="true"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedEditions"
+    [rowHover]="true"
+    dataKey="isbn"
+    currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} autores"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Gestionar Ediciones</h5>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem"><p-tableHeaderCheckbox /></th>
+            <th style="min-width: 16rem">ISBN</th>
+            <th style="min-width: 16rem">Año</th>
+            <th style="min-width: 16rem">Lenguaje</th>
+            <th style="min-width: 16rem">Título Libro</th>
+            <th>Acciones</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-edition>
+        <tr>
+            <td style="width: 3rem"><p-tableCheckbox [value]="edition"/></td>
+            <td style="min-width: 12rem">{{ edition.isbn }}</td>
+            <td style="min-width: 12rem">{{ edition.year }}</td>
+            <td style="min-width: 12rem">{{ edition.lang }}</td>
+            <td style="min-width: 12rem">{{ edition.libro.titulo }}</td>
+            <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editEdition(edition)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteEdition(edition)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="editionDialog" [style]="{ width: '450px' }" header="Ingrese datos de la edición" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+            <div>
+                <label for="editionIsbn" class="block font-bold mb-3">ISBN</label>
+                <input type="text" pInputText id="editionIsbn" [(ngModel)]="edition.isbn" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !edition.isbn">*Este campo es obligatorio.</small>
+            </div>
+            <div>
+                <label for="editionYear" class="block font-bold mb-3">Año</label>
+                <input type="text" pInputText id="editionYear" [(ngModel)]="edition.year" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !edition.year">*Este campo es obligatorio.</small>
+            </div>
+            <div>
+                <label for="editionLang" class="block font-bold mb-3">Lenguaje</label>
+                <input type="text" pInputText id="editionLang" [(ngModel)]="edition.lang" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !edition.lang">*Este campo es obligatorio.</small>
+            </div>
+            <div>
+                <label for="editionTitle" class="block font-bold mb-3">Título</label>
+                <input type="text" pInputText id="editionTitle" [(ngModel)]="edition.libro.titulo" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !edition.libro.titulo">*Este campo es obligatorio.</small>
+            </div>           
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Save" icon="pi pi-check" (click)="saveEdition()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
