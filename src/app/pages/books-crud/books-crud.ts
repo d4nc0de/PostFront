@@ -31,12 +31,6 @@ interface Column {
   header: string;
   customExportHeader?: string;
 }
-
-interface ExportColumn {
-  title: string;
-  dataKey: string;
-}
-
 @Component({
   selector: 'app-books-crud',
   imports: [CommonModule,
@@ -62,7 +56,6 @@ interface ExportColumn {
   styleUrl: './books-crud.scss'
 })
 export class BooksCrud {
-
   bookDialog: boolean = false;
   isNew: boolean = false;
 
@@ -80,9 +73,6 @@ export class BooksCrud {
   statuses!: any[];
 
   @ViewChild('dt') dt!: Table;
-
-  exportColumns!: ExportColumn[];
-
   cols!: Column[];
 
   constructor(
@@ -106,13 +96,6 @@ export class BooksCrud {
     this.books.set(books);
     this.editions = editions;
     this.copies = copies;
-
-    this.cols = [
-      { field: 'titulo', header: 'Título', customExportHeader: 'titulo' },
-      { field: 'author.nombre', header: 'Autor' }
-    ];
-
-    this.exportColumns = this.cols.map((col) => ({ title: col.header, dataKey: col.field }));
   }
 
   getEdition(book: Book | undefined): Edition | undefined {
@@ -139,8 +122,6 @@ export class BooksCrud {
     this.unchangedBook = { ...book }; // Store the original book for comparison
     this.book = structuredClone(book);
     this.bookDialog = true;
-
-    console.log("editing!");
   }
 
   deleteSelectedBooks() {
@@ -232,7 +213,6 @@ export class BooksCrud {
       });
       this.books.set([..._books, this.book]);
     } else {
-      console.log("updating", this.book);
       // TODO: Implementar API
       let i = _books.findIndex(b => b.titulo === this.unchangedBook.titulo);
 

@@ -16,7 +16,7 @@
     [(selection)]="selectedCopies"
     [rowHover]="true"
     dataKey="numero"
-    currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} autores"
+    currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} copias"
     [showCurrentPageReport]="true"
 >
     <ng-template #caption>
@@ -49,13 +49,13 @@
     <ng-template #content>
         <div class="flex flex-col gap-6">
             <div>
-                <label for="copyTitle" class="block font-bold mb-3">Número</label>
-                <input type="text" pInputText id="copyTitle" [(ngModel)]="copy.numero" required autofocus fluid />
+                <label for="copyNumber" class="block font-bold mb-3">Número</label>
+                <input type="text" pInputText id="copyNumber" [(ngModel)]="copy.numero" required autofocus fluid />
                 <small class="text-red-500" *ngIf="submitted && !copy.numero">*Este campo es obligatorio.</small>
             </div>
             <div>
-                <label for="copyTitle" class="block font-bold mb-3">ISBN</label>
-                <input type="text" pInputText id="copyTitle" [(ngModel)]="copy.edition.isbn" required autofocus fluid />
+                <label for="copyISBN" class="block font-bold mb-3">ISBN (Edición)</label>
+                <input type="text" pInputText id="copyISBN" [(ngModel)]="copy.edition.isbn" required autofocus fluid />
                 <small class="text-red-500" *ngIf="submitted && !copy.edition.isbn">*Este campo es obligatorio.</small>
             </div>
         </div>

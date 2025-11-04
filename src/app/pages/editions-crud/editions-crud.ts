@@ -1,4 +1,3 @@
-import { Book } from '@/Models/book.model';
 import { CommonModule } from '@angular/common';
 import { Component, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -22,10 +21,6 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { BookService } from '../service/books.service';
 import { Edition } from '@/Models/edition.model';
 import { EditionService } from '../service/editions.service';
-import { CopyService } from '../service/copies.service';
-import { Copy } from '@/Models/copy.model';
-import { AuthorService } from '../service/authors.service';
-import { Author } from '@/Models/author.model';
 
 interface Column {
   field: string;
@@ -33,10 +28,6 @@ interface Column {
   customExportHeader?: string;
 }
 
-interface ExportColumn {
-  title: string;
-  dataKey: string;
-}
 @Component({
   selector: 'app-editions-crud',
   imports: [CommonModule,
@@ -62,7 +53,6 @@ interface ExportColumn {
   styleUrl: './editions-crud.scss'
 })
 export class EditionsCrud {
-
   editionDialog: boolean = false;
   isNew: boolean = false;
 
@@ -79,15 +69,11 @@ export class EditionsCrud {
 
   @ViewChild('dt') dt!: Table;
 
-  exportColumns!: ExportColumn[];
-
   cols!: Column[];
 
   constructor(
     private bookService: BookService,
-    private authorService: AuthorService,
     private editionsService: EditionService,
-    private copiesService: CopyService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) { }
@@ -100,13 +86,6 @@ export class EditionsCrud {
     const editions = this.editionsService.getEditions();
 
     this.editions.set(editions);
-
-    this.cols = [
-      { field: 'titulo', header: 'Título', customExportHeader: 'titulo' },
-      { field: 'author.nombre', header: 'Autor' }
-    ];
-
-    this.exportColumns = this.cols.map((col) => ({ title: col.header, dataKey: col.field }));
   }
 
   onGlobalFilter(table: Table, event: Event) {
