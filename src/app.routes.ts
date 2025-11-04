@@ -9,6 +9,7 @@ import { Userscrud } from '@/pages/userscrud/userscrud';
 import { Post } from '@/pages/post/post';
 import { BooksCrud } from '@/pages/books-crud/books-crud';
 import { AuthorsCrud } from '@/pages/authors-crud/authors-crud';
+import { CopiesCrud } from '@/pages/copies-crud/copies-crud';
 
 export const appRoutes: Routes = [
     {
@@ -19,6 +20,7 @@ export const appRoutes: Routes = [
             { path: 'userscrud', component: Userscrud },
             { path: 'bookscrud', component: BooksCrud },
             { path: 'authorscrud', component: AuthorsCrud },
+            { path: 'copiescrud', component: CopiesCrud },
             { path: 'uikit', loadChildren: () => import('./app/pages/uikit/uikit.routes') },
             { path: 'documentation', component: Documentation },
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },

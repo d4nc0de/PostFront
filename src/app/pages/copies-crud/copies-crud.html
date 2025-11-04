@@ -1,0 +1,70 @@
+<p-toast />
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="Registrar" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+        <p-button severity="secondary" label="Eliminar" icon="pi pi-trash" outlined (onClick)="deleteSelectedCopies()" [disabled]="!selectedCopies || !selectedCopies.length" />
+    </ng-template>
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="copies()"
+    [rows]="10"
+    [columns]="cols"
+    [paginator]="true"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedCopies"
+    [rowHover]="true"
+    dataKey="numero"
+    currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} autores"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Gestionar Copias</h5>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem"><p-tableHeaderCheckbox /></th>
+            <th style="min-width: 16rem">Número</th>
+            <th style="min-width: 16rem">Título Libro</th>
+            <th>Acciones</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-copy>
+        <tr>
+            <td style="width: 3rem"><p-tableCheckbox [value]="copy"/></td>
+            <td style="min-width: 12rem">{{ copy.numero }}</td>
+            <td style="min-width: 12rem">{{ copy.edition.libro.titulo }}</td>
+            <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editCopy(copy)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteCopy(copy)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="copyDialog" [style]="{ width: '450px' }" header="Ingrese datos de la copia" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+            <div>
+                <label for="copyTitle" class="block font-bold mb-3">Número</label>
+                <input type="text" pInputText id="copyTitle" [(ngModel)]="copy.numero" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !copy.numero">*Este campo es obligatorio.</small>
+            </div>
+            <div>
+                <label for="copyTitle" class="block font-bold mb-3">ISBN</label>
+                <input type="text" pInputText id="copyTitle" [(ngModel)]="copy.edition.isbn" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !copy.edition.isbn">*Este campo es obligatorio.</small>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Save" icon="pi pi-check" (click)="saveCopy()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
