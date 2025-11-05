@@ -31,7 +31,7 @@
   </div>
 
   <div class="actions">
-    <button pButton type="button" label="Cancel" (click)="onCancel()" severity="secondary"></button>
-    <button pButton type="button" [label]="mode() === 'create' ? 'Create' : 'Save'" (click)="onSave()"></button>
+    <button pButton type="button" label="Cancel" (click)="onCancel()" severity="secondary" [disabled]="loading()"></button>
+    <button pButton type="button" [label]="mode() === 'create' ? 'Create' : 'Save'" (click)="onSave()" [loading]="loading()" [disabled]="loading()"></button>
   </div>
 </div>

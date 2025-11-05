@@ -6,13 +6,13 @@
                     <div class="post-header">
                         <div class="post-header-left">
                             <p-avatar class="post-avatar"
-                                [label]="(post.CreatedBy.userName || 'U') | slice:0:1 | uppercase" size="large"
+                                [label]="getInitial(post.CreatedBy.userName)" size="large"
                                 shape="circle">
                             </p-avatar>
 
                             <div class="post-meta">
                                 <div class="post-meta-top">
-                                    <span class="post-author">{{ post.CreatedBy.userName }}</span>
+                                    <span class="post-author">{{ getUserName(post.CreatedBy) }}</span>
                                     <span class="post-dot">•</span>
                                     <span class="post-badge">{{ post.category }}</span>
                                 </div>
@@ -47,13 +47,13 @@
             <ng-container *ngFor="let comment of authorizedComments; let i = index;">
                 <div class="comment-row {{!comment.authorizedBy ? 'comment-unauthorized' : ''}}">
                     <p-avatar class="comment-avatar"
-                        [label]="(comment?.createdBy?.userName || 'U') | slice:0:1 | uppercase" size="normal"
+                        [label]="getInitial(comment?.createdBy?.userName)" size="normal"
                         shape="circle">
                     </p-avatar>
 
                     <div class="comment-body">
                         <div class="comment-author">
-                            {{ comment?.createdBy?.userName }}
+                            {{ getUserName(comment?.createdBy) }}
                         </div>
                         <div class="comment-text">
                             {{ comment?.content }}

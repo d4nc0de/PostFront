@@ -69,7 +69,9 @@ export class Home {
       label: 'Sin filtro',
       icon: 'pi pi-users',
       command: () => {
-        this.posts = this.postService.getPosts();
+        this.postService.getPosts().subscribe(posts => {
+          this.posts = posts;
+        });
       }
     }
   ];
@@ -118,29 +120,78 @@ export class Home {
     });
 
     this.ref.onClose.subscribe((result?: post) => {
-      if (result) this.posts = [result, ...this.posts];
+      if (result) {
+        // Recargar todos los posts para obtener los datos completos desde la API
+        this.postService.getPosts().subscribe(posts => {
+          this.posts = posts;
+          // Actualizar el mapa de acciones
+          this.posts.forEach(p => {
+            this.postActionsMap.set(p.id, this.getPostActions(p));
+          });
+        });
+      }
     });
   }
 
   ngOnInit() {
-    this.posts = this.postService.getPosts();
-    this.users = this.userService.getUsers();
-
-    this.users.forEach(u => {
-      this.usersSelection.push({
-        label: u.userName,
-        icon: 'pi pi-user',
-        command: () => this.filterView(u)
-      });
+    // Suscribirse al Observable para obtener los posts de la API
+    this.postService.getPosts().subscribe({
+      next: (posts) => {
+        console.log('✅ Posts obtenidos de la API:', posts);
+        this.posts = posts;
+        
+        // Log para verificar comentarios
+        posts.forEach(post => {
+          const authorizedComments = this.authorizedCommentsFromPost(post);
+          console.log(`📝 Post ${post.id} (${post.title}): ${post.comments?.length || 0} comentarios totales, ${authorizedComments.length} autorizados`);
+        });
+        
+        // Crear el mapa de acciones para cada post
+        this.posts.forEach(p => {
+          this.postActionsMap.set(p.id, this.getPostActions(p));
+        });
+      },
+      error: (error) => {
+        console.error('❌ Error al obtener posts:', error);
+      }
     });
-
-    this.posts.forEach(p => {
-      this.postActionsMap.set(p.id, this.getPostActions(p));
+    
+    // Suscribirse al Observable para obtener los usuarios de la API
+    this.userService.getUsers().subscribe({
+      next: (users) => {
+        console.log('✅ Usuarios obtenidos:', users);
+        console.log('✅ Cantidad de usuarios:', users.length);
+        this.users = users;
+        
+        // Limpiar el menú antes de agregar nuevos usuarios
+        this.usersSelection = [
+          {
+            label: 'Sin filtro',
+            icon: 'pi pi-users',
+            command: () => {
+              this.postService.getPosts().subscribe(posts => {
+                this.posts = posts;
+              });
+            }
+          }
+        ];
+        
+        // Una vez que tenemos los usuarios, los agregamos al menú
+        this.users.forEach(u => {
+          this.usersSelection.push({
+            label: u.userName,
+            icon: 'pi pi-user',
+            command: () => this.filterView(u)
+          });
+        });
+      },
+      error: (error) => {
+        console.error('❌ Error en la suscripción:', error);
+      }
     });
   }
 
   openEdit(post: post) {
-    // TODO: Hacerlo con API
     const postIndex = this.posts.findIndex(p => p.id === post.id);
     const selected = this.posts[postIndex];
 
@@ -154,7 +205,14 @@ export class Home {
 
     this.ref.onClose.subscribe((result?: post) => {
       if (result) {
-        this.posts = this.posts.map((p, i) => (i === postIndex ? result : p));
+        // Recargar todos los posts para obtener los datos actualizados desde la API
+        this.postService.getPosts().subscribe(posts => {
+          this.posts = posts;
+          // Actualizar el mapa de acciones
+          this.posts.forEach(p => {
+            this.postActionsMap.set(p.id, this.getPostActions(p));
+          });
+        });
       }
     });
   }
@@ -175,8 +233,10 @@ export class Home {
   }
 
   filterView(user: User) {
-    // TODO: Hacerlo con API
-    this.posts = this.postService.getPosts().filter(p => p.CreatedBy.id === user.id);
+    // Filtrar posts por usuario usando la API
+    this.postService.getPosts().subscribe(posts => {
+      this.posts = posts.filter(p => p.CreatedBy.id === user.id);
+    });
   }
 
   ngOnDestroy() {
@@ -185,5 +245,14 @@ export class Home {
 
   authorizedCommentsFromPost(post: post) {
     return post.comments?.filter(c => c.authorizedDate) || [];
+  }
+
+  getInitial(userName: string | undefined | null): string {
+    if (!userName) return 'U';
+    return userName.toString().slice(0, 1).toUpperCase();
+  }
+
+  getUserName(user: User | undefined | null): string {
+    return user?.userName || 'Usuario';
   }
 }
