@@ -2,7 +2,7 @@ import { Book } from '@/Models/book.model';
 import { CommonModule } from '@angular/common';
 import { Component, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
@@ -28,6 +28,8 @@ import { AuthorService } from '../service/authors.service';
 import { Prestamo } from '@/Models/prestamo.model';
 import { PrestamoService } from '../service/prestamos.service';
 import { UserService } from '../service/users.service';
+import { User } from '@/Models/user.model';
+import { MenuModule } from 'primeng/menu';
 
 interface Column {
   field: string;
@@ -37,7 +39,8 @@ interface Column {
 
 @Component({
   selector: 'app-prestamos-crud',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     TableModule,
     FormsModule,
     ButtonModule,
@@ -54,12 +57,16 @@ interface Column {
     TagModule,
     InputIconModule,
     IconFieldModule,
-    ConfirmDialogModule],
+    ConfirmDialogModule,
+    MenuModule
+  ],
   providers: [MessageService, BookService, ConfirmationService],
   templateUrl: './prestamos-crud.html',
   styleUrl: './prestamos-crud.scss'
 })
 export class PrestamosCrud {
+  usersSelection: MenuItem[] = [];
+  isFiltered: boolean = false;
 
   prestamoDialog: boolean = false;
   isNew: boolean = false;
@@ -103,6 +110,31 @@ export class PrestamosCrud {
     this.prestamos.set(prestamos);
     this.editions = editions;
     this.copies = copies;
+
+    this.usersSelection.push({
+      label: 'Sin filtro',
+      icon: 'pi pi-users',
+      command: () => {
+        this.isFiltered = false;
+        this.prestamos.set(prestamos);
+      }
+    })
+
+    this.prestamos().forEach(prestamo => {
+      this.usersSelection.push({
+        label: prestamo.user.userName,
+        icon: 'pi pi-user',
+        command: () => {
+          this.isFiltered = true;
+          this.filterView(prestamo.user);
+        }
+      })
+    });
+  }
+
+  filterView(user: User) {
+    // TODO: Hacerlo con API
+    return this.prestamos.set(this.prestamosService.getPrestamos().filter(p => p.user.id === user.id));
   }
 
   getEdition(book: Book | undefined): Edition | undefined {
