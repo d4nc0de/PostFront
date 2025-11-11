@@ -4,6 +4,10 @@
         <p-button label="Registrar" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
         <p-button severity="secondary" label="Eliminar" icon="pi pi-trash" outlined (onClick)="deleteSelectedPrestamos()" [disabled]="!selectedPrestamos || !selectedPrestamos.length" />
     </ng-template>
+    <ng-template #end>
+        <p-button [label]="isFiltered ? 'Filtrando por usuario' : 'Filtrar por usuario'" icon="pi pi-filter" [severity]="isFiltered ? 'primary' : 'secondary'" class="mr-2" (click)="filterMenu.toggle($event)"/>
+        <p-menu #filterMenu [popup]="true" [model]="usersSelection"/>
+    </ng-template>
 </p-toolbar>
 
 <p-table
