@@ -1,24 +1,21 @@
+<p-toast />
 <p-toolbar styleClass="mb-6">
     <ng-template #start>
         <p-button label="Registrar" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
-        <p-button severity="secondary" label="Eliminar" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
-    </ng-template>
-
-    <ng-template #end>
-        <p-button label="Exportar" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+        <p-button severity="secondary" label="Eliminar" icon="pi pi-trash" outlined (onClick)="deleteSelectedUsers()" [disabled]="!selectedUsers || !selectedUsers.length" />
     </ng-template>
 </p-toolbar>
 
 <p-table
     #dt
-    [value]="products()"
+    [value]="users"
     [rows]="10"
     [columns]="cols"
     [paginator]="true"
     [tableStyle]="{ 'min-width': '75rem' }"
-    [(selection)]="selectedProducts"
+    [(selection)]="selectedUsers"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="userName"
     currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} usuarios"
     [showCurrentPageReport]="true"
 >
@@ -30,43 +27,36 @@
     <ng-template #header>
         <tr>
             <th style="width: 3rem"><p-tableHeaderCheckbox /></th>
-            <th style="min-width: 16rem">Id Usuario</th>
-            <th style="min-width:16rem">Nombre</th>
+            <th style="min-width: 16rem">Nombre</th>
             <th>Acciones</th>
         </tr>
     </ng-template>
-    <ng-template #body let-product>
+    <ng-template #body let-user>
         <tr>
-            <td style="width: 3rem"><p-tableCheckbox [value]="product"/></td>
-            <td style="min-width: 12rem">{{ product.code }}</td>
-            <td style="min-width: 16rem">{{ product.name }}</td>
+            <td style="width: 3rem"><p-tableCheckbox [value]="user"/></td>
+            <td style="min-width: 12rem">{{ user.nombre }}</td>
             <td>
-                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editProduct(product)" />
-                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteProduct(product)" />
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editUser(user)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteUser(user)" />
             </td>
         </tr>
     </ng-template>
 </p-table>
 
-<p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Ingrese datos de usuario" [modal]="true">
+<p-dialog [(visible)]="userDialog" [style]="{ width: '450px' }" header="Ingrese datos del usuario" [modal]="true">
     <ng-template #content>
         <div class="flex flex-col gap-6">
             <div>
-                <label for="idu" class="block font-bold mb-3">Id Usuario</label>
-                <input type="text" pInputText id="idu" [(ngModel)]="product.id" required autofocus fluid />
-                <small class="text-red-500" *ngIf="submitted && !product.id">*Este campo es obligatorio.</small>
-            </div>
-            <div>
-                <label for="name" class="block font-bold mb-3">Nombre</label>
-                <input type="text" pInputText id="name" [(ngModel)]="product.name" required autofocus fluid />
-                <small class="text-red-500" *ngIf="submitted && !product.name">*Este campo es obligatorio.</small>
+                <label for="authorName" class="block font-bold mb-3">Nombre</label>
+                <input type="text" pInputText id="authorName" [(ngModel)]="user.userName" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !user.userName">*Este campo es obligatorio.</small>
             </div>
         </div>
     </ng-template>
 
     <ng-template #footer>
         <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
-        <p-button label="Save" icon="pi pi-check" (click)="saveProduct()" />
+        <p-button label="Save" icon="pi pi-check" (click)="saveUser()" />
     </ng-template>
 </p-dialog>
 
